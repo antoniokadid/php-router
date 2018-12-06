@@ -71,7 +71,46 @@ Router::handle();
  */
 ```
 
+The above example using a class instead of callback.
 
-## LICENSE
+```php
+use Router\Router;
+use Router\IRouteImplementation;
+use Router\IRouteResult;
+
+class HelloController implements IRouteImplementation
+{
+    private $language;
+    private $action;
+
+    function __construct($language, $controller, $action)
+    {
+        $this->language = $language;
+        $this->action = $action;
+    }
+
+    function handle(): ?IRouteResult
+    {
+        echo nl2br(sprintf("%s\n%s\n%s", $this->language, 'hello', $this->action));
+
+        return NULL;
+    }
+}
+
+Router::register('GET', ':language/:controller/:action', 'HelloController');
+
+Router::handle();
+
+/**
+ * URL: en/hello/test
+ *
+ * Output:
+ *   en
+ *   hello
+ *   test
+ */
+```
+
+## LICENCE
 
 php-router is released under MIT licence.
