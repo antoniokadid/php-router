@@ -270,7 +270,7 @@ class Router
 
             if (self::$injectionHandler == NULL || !is_callable(self::$injectionHandler))
                 throw new RouterException(
-                    sprintf('Injection handler is undefined and cannot inject $s.', $parameterTypeName),
+                    sprintf('Injection handler is undefined and cannot inject %s.', $parameterTypeName),
                     self::ERR_UNDEF_INJECTION_HANDLER,
                     ['name' => $parameterTypeName]);
 
