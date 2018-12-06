@@ -25,6 +25,10 @@ RewriteRule ^(.*)$ index.php [QSA,L,END]
 
 ## Examples
 
+GET request *en/hello/world*
+
+URL keywords are defined with colon (:).
+
 ```php
 use Router\Router;
 
@@ -35,15 +39,38 @@ Router::register('GET', ':language/:controller/:action', function ($language, $c
 Router::handle();
 
 /**
-
-URL: en/hello/test
-
-Output:
-    en
-    hello
-    test
-*/
+ * URL: en/hello/test
+ *
+ * Output:
+ *   en
+ *   hello
+ *   test
+ */
 ```
+
+GET request *en/hello/world* with callback parameters mixed.
+
+Router automatically matches the names of the parameters to the url keywords.
+
+```php
+use Router\Router;
+
+Router::register('GET', ':language/:controller/:action', function ($action, $controller, $language) {
+    echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
+});
+
+Router::handle();
+
+/**
+ * URL: en/hello/test
+ *
+ * Output:
+ *   en
+ *   hello
+ *   test
+ */
+```
+
 
 ## LICENSE
 
