@@ -155,7 +155,7 @@ class Router
             try {
                 $refClass = new ReflectionClass($name);
 
-                if (!$refClass->implementsInterface('Sculptor\\Routing\\IRouteImplementation'))
+                if (!$refClass->implementsInterface('Router\\IRouteImplementation'))
                     throw new RouterException(sprintf('Unable to handle route with %s.', $name), self::ERR_UNABLE_TO_HANDLE, ['name' => $name]);
 
                 $invokeParameters = self::getInvokeParameters(
