@@ -163,6 +163,15 @@ Router::registerInjectionHandler(function($parameterType, $parameterName, $urlPa
 Router::register('GET', ':language/:controller/:action', 'HelloController');
 
 Router::handle();
+
+/**
+ * URL: en/hello/test
+ *
+ * Output:
+ *   en
+ *   hello
+ *   test
+ */
 ```
 
 ## LICENSE
