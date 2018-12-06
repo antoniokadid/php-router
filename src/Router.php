@@ -274,7 +274,7 @@ class Router
                     self::ERR_UNDEF_INJECTION_HANDLER,
                     ['name' => $parameterTypeName]);
 
-            $injectionResult = call_user_func_array(self::$injectionHandler, [$parameterTypeName, $parameters]);
+            $injectionResult = call_user_func_array(self::$injectionHandler, [$parameterTypeName, $parameterName, $parameters]);
 
             if ($injectionResult == NULL && $parameterType->allowsNull())
                 $result[] = NULL;
