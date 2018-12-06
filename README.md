@@ -111,6 +111,60 @@ Router::handle();
  */
 ```
 
-## LICENCE
+Similar to the above example invoke injection handler for language.
 
-php-router is released under MIT licence.
+```php
+use Router\Router;
+use Router\IRouteImplementation;
+use Router\IRouteResult;
+
+class Language
+{
+    private $language;
+
+    public function __construct(string $language)
+    {
+        $this->language = $language;
+    }
+
+    public function getCode(): string
+    {
+        return $this->language;
+    }
+}
+
+class HelloController implements IRouteImplementation
+{
+    private $language;
+    private $action;
+
+    // Intentionally specify parameter type for language. This will invoke the injection handler.
+    function __construct(Language $language, $action)
+    {
+        $this->language = $language;
+        $this->action = $action;
+    }
+
+    function handle(): ?IRouteResult
+    {
+        echo nl2br(sprintf("%s\n%s\n%s", $this->language->getCode(), 'hello', $this->action));
+
+        return NULL;
+    }
+}
+
+Router::registerInjectionHandler(function($parameterType, $parameterName, $urlParameters) {
+    if ($parameterType == "Language")
+        return new Language($urlParameters[$parameterName]);
+
+    return NULL;
+});
+
+Router::register('GET', ':language/:controller/:action', 'HelloController');
+
+Router::handle();
+```
+
+## LICENSE
+
+php-router is released under MIT license.
