@@ -8,10 +8,13 @@ A PHP library to enable mapping of URLs that do not exist.
 
 composer require antoniokadid/php-router
 
+## Requirements
+
+* PHP 7.1 or above.
+* mod_rewrite must be enabled
+
 ## Configuration
 *.htaccess configuration required to redirect all requests to a single PHP file that contains the route definitions.*
-
-*Depends on mod_rewrite.*
 
 ```apacheconfig
 # example for .htacccess configuration
