@@ -25,7 +25,7 @@ RewriteRule ^(.*)$ index.php [QSA,L,END]
 
 ## Examples
 
-GET request *en/hello/world*
+GET request *en/hello/test*
 
 URL keywords are defined with colon (:).
 
