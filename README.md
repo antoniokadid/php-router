@@ -48,7 +48,7 @@ Router::handle();
  */
 ```
 
-GET request *en/hello/world* with callback parameters in different order with URL keywords.
+GET request *en/hello/test* with callback parameters in different order with URL keywords.
 
 Router automatically matches the names of the parameters to the url keywords.
 
