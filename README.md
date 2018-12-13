@@ -6,7 +6,7 @@ A PHP library to enable mapping of URLs that do not exist.
 
 ## Installation
 
-composer require antoniokadid/php-router
+composer require antoniokadid/php-router:dev-master
 
 ## Requirements
 
