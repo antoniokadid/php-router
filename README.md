@@ -177,6 +177,38 @@ echo $returnedRouteValue;
  *   test
  */
 ```
+
+Exception handling.
+
+```php
+use AntonioKadid\Router\Router;
+
+// This route will be executed if language has value 'en' or 'el' and if controller has value 'hello'.
+Router::get(':language/:controller/:action')
+    ->then(function($language, $controller, $action) {
+    
+        throw new \Exception('Custom exception');
+    
+        return nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
+    })
+    ->catch(function(Exception $exception){
+        return $exception->getMessage();
+        
+        // You can also skip return statement and do something else like
+        // die($exception->getMessage()) or echo 'Something went wrong.';
+    });
+
+$returnedRouteValue = Router::execute();
+
+echo $returnedRouteValue;
+
+/**
+ * URL: en/hello/test
+ *
+ * Output:
+ * Custom exception
+ */
+```
 ## LICENSE
 
 php-router is released under MIT license.
