@@ -33,7 +33,7 @@ GET request *en/hello/test*
 URL keywords are defined with colon (:).
 
 ```php
-use AntonioKadid\Router;
+use AntonioKadid\Router\Router;
 
 Router::get(':language/:controller/:action')
     ->then(function ($language, $controller, $action) {
@@ -57,7 +57,7 @@ GET request *en/hello/test* with callback parameters in different order with URL
 Router automatically matches the names of the parameters to the url keywords.
 
 ```php
-use AntonioKadid\Router;
+use AntonioKadid\Router\Router;
 
 Router::get(':language/:controller/:action')
     ->then(function ($action, $controller, $language) {
@@ -79,7 +79,7 @@ Router::execute();
 The above example using a class instead of callback.
 
 ```php
-use AntonioKadid\Router;
+use AntonioKadid\Router\Router;
 
 class HelloController
 {
@@ -107,7 +107,7 @@ Router::execute();
 Similar to the above example invoke injection handler for language.
 
 ```php
-use AntonioKadid\Router;
+use AntonioKadid\Router\Router;
 
 class Language
 {
@@ -147,6 +147,36 @@ Router::execute();
  */
 ```
 
+Conditional route execution.
+
+```php
+use AntonioKadid\Router\Router;
+
+// This route will be executed if language has value 'en' or 'el' and if controller has value 'hello'.
+Router::get(':language/:controller/:action')
+    ->if([
+        'language' => '/^en|el$/i',
+        'controller' => function($controller) {
+            return strcasecmp($controller, 'hello') === 0;
+        }
+    ])
+    ->then(function($language, $controller, $action) {
+        return nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
+    });
+
+$returnedRouteValue = Router::execute();
+
+echo $returnedRouteValue;
+
+/**
+ * URL: en/hello/test
+ *
+ * Output:
+ *   en
+ *   hello
+ *   test
+ */
+```
 ## LICENSE
 
 php-router is released under MIT license.
