@@ -33,13 +33,14 @@ GET request *en/hello/test*
 URL keywords are defined with colon (:).
 
 ```php
-use Router\Router;
+use AntonioKadid\Router;
 
-Router::register('GET', ':language/:controller/:action', function ($language, $controller, $action) {
-    echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
-});
+Router::get(':language/:controller/:action')
+    ->then(function ($language, $controller, $action) {
+        echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
+    });
 
-Router::handle();
+Router::execute();
 
 /**
  * URL: en/hello/test
@@ -56,13 +57,14 @@ GET request *en/hello/test* with callback parameters in different order with URL
 Router automatically matches the names of the parameters to the url keywords.
 
 ```php
-use Router\Router;
+use AntonioKadid\Router;
 
-Router::register('GET', ':language/:controller/:action', function ($action, $controller, $language) {
-    echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
-});
+Router::get(':language/:controller/:action')
+    ->then(function ($action, $controller, $language) {
+        echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
+    });
 
-Router::handle();
+Router::execute();
 
 /**
  * URL: en/hello/test
@@ -77,32 +79,20 @@ Router::handle();
 The above example using a class instead of callback.
 
 ```php
-use Router\Router;
-use Router\IRouteImplementation;
-use Router\IRouteResult;
+use AntonioKadid\Router;
 
-class HelloController implements IRouteImplementation
+class HelloController
 {
-    private $language;
-    private $action;
-
-    function __construct($language, $controller, $action)
+    public static function handle($language, $controller, $action)
     {
-        $this->language = $language;
-        $this->action = $action;
-    }
-
-    function handle(): ?IRouteResult
-    {
-        echo nl2br(sprintf("%s\n%s\n%s", $this->language, 'hello', $this->action));
-
-        return NULL;
+        echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
     }
 }
 
-Router::register('GET', ':language/:controller/:action', 'HelloController');
+Router::get(':language/:controller/:action')
+    ->then(['HelloController', 'handle']);
 
-Router::handle();
+Router::execute();
 
 /**
  * URL: en/hello/test
@@ -117,9 +107,7 @@ Router::handle();
 Similar to the above example invoke injection handler for language.
 
 ```php
-use Router\Router;
-use Router\IRouteImplementation;
-use Router\IRouteResult;
+use AntonioKadid\Router;
 
 class Language
 {
@@ -136,36 +124,18 @@ class Language
     }
 }
 
-class HelloController implements IRouteImplementation
+class HelloController
 {
-    private $language;
-    private $action;
-
-    // Intentionally specify parameter type for language. This will invoke the injection handler.
-    function __construct(Language $language, $action)
+    public static function handle(Language $language, $controller, $action)
     {
-        $this->language = $language;
-        $this->action = $action;
-    }
-
-    function handle(): ?IRouteResult
-    {
-        echo nl2br(sprintf("%s\n%s\n%s", $this->language->getCode(), 'hello', $this->action));
-
-        return NULL;
+        echo nl2br(sprintf("%s\n%s\n%s", $language->getCode(), $controller, $action));
     }
 }
 
-Router::registerInjectionHandler(function($parameterType, $parameterName, $urlParameters) {
-    if ($parameterType == "Language")
-        return new Language($urlParameters[$parameterName]);
+Router::get(':language/:controller/:action')
+    ->then(['HelloController', 'handle']);
 
-    return NULL;
-});
-
-Router::register('GET', ':language/:controller/:action', 'HelloController');
-
-Router::handle();
+Router::execute();
 
 /**
  * URL: en/hello/test

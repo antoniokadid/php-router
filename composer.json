@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Router\\": "src/"
+            "AntonioKadid\\Router\\": "src/"
         }
     }
 }
