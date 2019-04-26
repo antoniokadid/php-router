@@ -13,6 +13,13 @@ final class Router
     private static $_registry = [];
 
     /**
+     * Router constructor.
+     */
+    private function __construct()
+    {
+    }
+
+    /**
      * @param string $route
      *
      * @return Route
@@ -30,7 +37,6 @@ final class Router
     public static function post(string $route): Route
     {
         return self::register('POST', $route);
-
     }
 
     /**
@@ -74,11 +80,35 @@ final class Router
     }
 
     /**
+     * @param string $method
+     * @param string $route
+     *
+     * @return Route
+     */
+    public static function register(string $method, string $route): Route
+    {
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], $method) !== 0)
+            return new Route();
+
+        $pattern = Router::routeToRegExPattern($route);
+        if (!@preg_match($pattern, $_SERVER['REQUEST_URI'], $urlParameters))
+            return new Route();
+
+        parse_str($_SERVER['QUERY_STRING'], $queryParameters);
+
+        $route = new Route($urlParameters + $queryParameters);
+
+        self::$_registry[] = $route;
+
+        return $route;
+    }
+
+    /**
      * @return array|mixed|NULL
      */
     public static function execute()
     {
-        $result = array_map(function(Route $route) {
+        $result = array_map(function (Route $route) {
             return $route->execute();
         }, self::$_registry);
 
@@ -115,29 +145,5 @@ final class Router
             $regex = "\\/{$regex}";
 
         return "/^.*{$regex}(?:\\?.*|$)/i";
-    }
-
-    /**
-     * @param string $method
-     * @param string $route
-     *
-     * @return Route
-     */
-    private static function register(string $method, string $route): Route
-    {
-        if (strcasecmp($_SERVER['REQUEST_METHOD'], $method) !== 0)
-            return new Route();
-
-        $pattern = Router::routeToRegExPattern($route);
-        if (!@preg_match($pattern, $_SERVER['REQUEST_URI'], $urlParameters))
-            return new Route();
-
-        parse_str($_SERVER['QUERY_STRING'], $queryParameters);
-
-        $route = new Route($urlParameters + $queryParameters);
-
-        self::$_registry[] = $route;
-
-        return $route;
     }
 }
