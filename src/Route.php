@@ -1,33 +1,34 @@
 <?php
 
-namespace AntonioKadid\Router;
+namespace AntonioKadid\Routing;
 
 use Closure;
-use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionParameter;
+use Throwable;
 
 /**
  * Class Route
  *
- * @package AntonioKadid\Router
+ * @package AntonioKadid\Routing
  */
-final class Route
+class Route
 {
     /** @var array */
     private $_conditions = NULL;
     /** @var callable|NULL */
-    private $_exceptionCallable = NULL;
+    private $_throwableHandler = NULL;
     /** @var callable|NULL */
-    private $_implementationCallable = NULL;
+    private $_implementationHandler = NULL;
     /** @var array */
     private $_urlQueryParams = [];
 
     /**
      * Route constructor.
      * s
+     *
      * @param array $urlQueryParams
      */
     public function __construct(array $urlQueryParams = [])
@@ -116,7 +117,7 @@ final class Route
     }
 
     /**
-     * Exception handler for route.
+     * Throwable handler for route.
      *
      * @param callable $callable
      *
@@ -124,7 +125,7 @@ final class Route
      */
     public function catch(callable $callable): Route
     {
-        $this->_exceptionCallable = $callable;
+        $this->_throwableHandler = $callable;
 
         return $this;
     }
@@ -138,7 +139,7 @@ final class Route
      */
     public function then(callable $callable): Route
     {
-        $this->_implementationCallable = $callable;
+        $this->_implementationHandler = $callable;
 
         return $this;
     }
@@ -156,32 +157,30 @@ final class Route
     }
 
     /**
-     * @return mixed|NULL
+     * @return mixed|null
      *
-     * @throws Exception
-     *
-     * @internal
+     * @throws Throwable
      */
     public function execute()
     {
         try {
-            if (!is_callable($this->_implementationCallable))
+            if (!is_callable($this->_implementationHandler))
                 die('Undefined route implementation detected.');
 
             if ($this->checkConditions() !== TRUE)
                 return NULL;
 
-            $function = new ReflectionFunction(Closure::fromCallable($this->_implementationCallable));
+            $function = new ReflectionFunction(Closure::fromCallable($this->_implementationHandler));
 
             return $function->invokeArgs(self::getInvokeArgs($this->_urlQueryParams, $function->getParameters()));
-        } catch (Exception $exception) {
-            if ($exception instanceof ReflectionException)
-                die($exception->getMessage());
+        } catch (Throwable $throwable) {
+            if ($throwable instanceof ReflectionException)
+                die($throwable->getMessage());
 
-            if (!is_callable($this->_exceptionCallable))
-                throw $exception;
+            if (!is_callable($this->_throwableHandler))
+                throw $throwable;
 
-            return call_user_func($this->_exceptionCallable, $exception);
+            return call_user_func($this->_throwableHandler, $throwable);
         }
     }
 

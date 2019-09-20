@@ -1,16 +1,18 @@
 <?php
 
-namespace AntonioKadid\Router;
+namespace AntonioKadid\Routing;
+
+use Throwable;
 
 /**
  * Class Router
  *
- * @package AntonioKadid\Router
+ * @package AntonioKadid\Routing
  */
-final class Router
+class Router
 {
-    /** @var Route[] */
-    private static $_registry = [];
+    /** @var Route */
+    private static $_activatedRoute = NULL;
 
     /**
      * Router constructor.
@@ -81,45 +83,39 @@ final class Router
 
     /**
      * @param string $method
-     * @param string $route
+     * @param string ...$route
      *
      * @return Route
      */
-    public static function register(string $method, string $route): Route
+    public static function register(string $method, string ...$routes): Route
     {
-        if (strcasecmp($_SERVER['REQUEST_METHOD'], $method) !== 0)
+        if (self::$_activatedRoute != NULL || strcasecmp($_SERVER['REQUEST_METHOD'], $method) !== 0)
             return new Route();
 
-        $pattern = Router::routeToRegExPattern($route);
-        if (!@preg_match($pattern, $_SERVER['REQUEST_URI'], $urlParameters))
-            return new Route();
+        foreach ($routes as $route) {
+            $pattern = Router::routeToRegExPattern($route);
+            if (@preg_match($pattern, $_SERVER['REQUEST_URI'], $urlParameters) === 1) {
+                parse_str($_SERVER['QUERY_STRING'], $queryParameters);
+                self::$_activatedRoute = new Route($urlParameters + $queryParameters);
 
-        parse_str($_SERVER['QUERY_STRING'], $queryParameters);
+                return self::$_activatedRoute;
+            }
+        }
 
-        $route = new Route($urlParameters + $queryParameters);
-
-        self::$_registry[] = $route;
-
-        return $route;
+        return new Route();
     }
 
     /**
-     * @return array|mixed|NULL
+     * @return mixed|null
+     *
+     * @throws Throwable
      */
     public static function execute()
     {
-        $result = array_map(function (Route $route) {
-            return $route->execute();
-        }, self::$_registry);
+        if (self::$_activatedRoute != NULL)
+            return self::$_activatedRoute->execute();
 
-        $count = count($result);
-
-        if ($count === 0)
-            return NULL;
-        else if ($count === 1)
-            return array_shift($result);
-        else
-            return $result;
+        return NULL;
     }
 
     /**
@@ -144,6 +140,6 @@ final class Router
         if (strpos($regex, '\/') !== 0)
             $regex = "\\/{$regex}";
 
-        return "/^.*{$regex}(?:\\?.*|$)/i";
+        return "/^{$regex}(?:\\?.*$|$)/i";
     }
 }
