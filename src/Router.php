@@ -83,7 +83,7 @@ class Router
 
     /**
      * @param string $method
-     * @param string ...$route
+     * @param string ...$routes
      *
      * @return Route
      */
@@ -127,19 +127,21 @@ class Router
      */
     private static function routeToRegExPattern(string $route): string
     {
-        // temporarily replace :var to @@var@@
-        // we do this because we want to escape slashes in patten which are part of url
-        // and then we put back the :var with some regular expression goodies.
-        $preRegex = preg_replace('/\\:(\\w+)/i', '@@\\1@@', $route);
+        $pattern = preg_replace_callback_array([
+            '/\\{(\\w+)\\}/i' => function($match) {
+                return sprintf('(?<%s>(?:[^/\\?]+))', $match[1]);
+            },
+            '/\\*\\*/' => function($match) {
+                return '(?:[^\\?]+)';
+            },
+            '/\\*/' => function($match) {
+                return '(?:[^/\\?]+)';
+            }
+        ], $route);
 
-        // generate a regex that will have named groups based on :var
-        $regex = preg_replace_callback('/@@(\w+)@@/i', function ($match) {
-            return "(?<{$match[1]}>(?:[^\\/\\?]+))";
-        }, preg_quote($preRegex, '/'));
+        if (strpos($pattern, '/') !== 0)
+            $pattern = "/{$pattern}";
 
-        if (strpos($regex, '\/') !== 0)
-            $regex = "\\/{$regex}";
-
-        return "/^{$regex}(?:\\?.*$|$)/i";
+        return sprintf('`^%s(?:\\?.*$|$)`i', $pattern);
     }
 }

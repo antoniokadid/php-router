@@ -1,8 +1,7 @@
 # php-router
+A WYSIWYG PHP library to enable mapping of URLs that do not exist.
 
-A PHP library to enable mapping of URLs that do not exist.
-
-*Project under development.*
+*Project under development and may be heavily change. Use at your own risk.*
 
 ## Installation
 
@@ -17,7 +16,7 @@ composer require antoniokadid/php-router
 *.htaccess configuration required to redirect all requests to a single PHP file that contains the route definitions.*
 
 ```apacheconfig
-# example for .htacccess configuration
+# example for .htaccess configuration
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-l
@@ -26,16 +25,51 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php [QSA,L,END]
 ```
 
+## Definitions
+
+- URL keywords are defined with curly brackets ({}).
+
+- Double star (**) indicates that anything past this symbol until the end of URL will be a match.
+
+- Single star (*) indicates that anything past this symbol until next slash (/) will be a match.
+
 ## Examples
-
-GET request *en/hello/test*
-
-URL keywords are defined with colon (:).
 
 ```php
 use AntonioKadid\Routing\Router;
 
-Router::get(':language/:controller/:action')
+/** 
+ * Will match any of the following (3 parts separated by 2 slashes)
+ *
+ * en/admin/home
+ * en/test/home
+ * fr/page/home
+ */
+Router::get('{language}/*/{action}')
+    ->then(function ($language, $action) {
+        echo nl2br(sprintf("%s\n%s", $language, $action));
+    });
+
+/**
+ * Will match any route that starts with at least something followed by a slash.
+ * Should always defined last otherwise it will match any other route defined after it.
+ */
+Router::get('{language}/**')
+    ->then(function ($language) {
+        echo $language;
+    });
+
+Router::execute();
+```
+
+
+
+GET request *en/hello/test*
+
+```php
+use AntonioKadid\Routing\Router;
+
+Router::get('{language}/{controller}/{action}')
     ->then(function ($language, $controller, $action) {
         echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
     });
@@ -59,7 +93,7 @@ Router automatically matches the names of the parameters to the url keywords.
 ```php
 use AntonioKadid\Routing\Router;
 
-Router::get(':language/:controller/:action')
+Router::get('{language}/{controller}/{action}')
     ->then(function ($action, $controller, $language) {
         echo nl2br(sprintf("%s\n%s\n%s", $language, $controller, $action));
     });
@@ -89,7 +123,7 @@ class HelloController
     }
 }
 
-Router::get(':language/:controller/:action')
+Router::get('{language}/{controller}/{action}')
     ->then(['HelloController', 'handle']);
 
 Router::execute();
@@ -132,7 +166,7 @@ class HelloController
     }
 }
 
-Router::get(':language/:controller/:action')
+Router::get('{language}/{controller}/{action}')
     ->then(['HelloController', 'handle']);
 
 Router::execute();
@@ -153,7 +187,7 @@ Conditional route execution.
 use AntonioKadid\Routing\Router;
 
 // This route will be executed if language has value 'en' or 'el' and if controller has value 'hello'.
-Router::get(':language/:controller/:action')
+Router::get('{language}/{controller}/{action}')
     ->if([
         'language' => '/^en|el$/i',
         'controller' => function($controller) {
@@ -184,7 +218,7 @@ Exception handling.
 use AntonioKadid\Routing\Router;
 
 // This route will be executed if language has value 'en' or 'el' and if controller has value 'hello'.
-Router::get(':language/:controller/:action')
+Router::get('{language}/{controller}/{action}')
     ->then(function($language, $controller, $action) {
     
         throw new \Exception('Custom exception');
