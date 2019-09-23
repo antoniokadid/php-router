@@ -1,6 +1,6 @@
 {
     "name": "antoniokadid/php-router",
-    "description": "Enable mapping of URLs that do not exist.",
+    "description": "A PHP WYSIWYG library to enable mapping of URLs that do not exist.",
     "type": "library",
     "license": "MIT",
     "authors": [

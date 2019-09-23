@@ -1,5 +1,5 @@
 # php-router
-A WYSIWYG PHP library to enable mapping of URLs that do not exist.
+A PHP WYSIWYG library to enable mapping of URLs that do not exist.
 
 *Project under development and may be heavily change. Use at your own risk.*
 
