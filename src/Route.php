@@ -27,7 +27,6 @@ class Route
 
     /**
      * Route constructor.
-     * s
      *
      * @param array $urlQueryParams
      */
@@ -55,7 +54,7 @@ class Route
             if (!$reflectionParameter->hasType()) {
 
                 if (array_key_exists($parameterName, $parameters))
-                    $args[] = $parameters[$parameterName];
+                    $args[] = urldecode($parameters[$parameterName]);
                 else if ($reflectionParameter->isOptional())
                     $args[] = $reflectionParameter->getDefaultValue();
                 else
@@ -78,7 +77,7 @@ class Route
                 continue;
             }
 
-            $parameterValue = $parameters[$parameterName];
+            $parameterValue = urldecode($parameters[$parameterName]);
 
             if (strcasecmp($parameterTypeName, 'string') === 0)
                 $args[] = strval($parameterValue);
@@ -196,7 +195,7 @@ class Route
             if (is_callable($condition)) {
                 if (is_int($paramName) && (call_user_func($condition) !== TRUE))
                     return FALSE;
-                else if (array_key_exists($paramName, $this->_urlQueryParams) && (call_user_func($condition, $this->_urlQueryParams[$paramName]) !== TRUE))
+                else if (array_key_exists($paramName, $this->_urlQueryParams) && (call_user_func($condition, urldecode($this->_urlQueryParams[$paramName])) !== TRUE))
                     return FALSE;
 
                 continue;
@@ -205,7 +204,7 @@ class Route
             if (!array_key_exists($paramName, $this->_urlQueryParams) || !is_string($condition))
                 continue;
 
-            $result = @preg_match($condition, $this->_urlQueryParams[$paramName]);
+            $result = @preg_match($condition, urldecode($this->_urlQueryParams[$paramName]));
             if ($result === FALSE)
                 die(sprintf('Invalid regular expresion for %s', $paramName));
 
