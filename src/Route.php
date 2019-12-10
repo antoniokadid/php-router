@@ -188,7 +188,7 @@ class Route
      */
     public function hasThrowableHandler(): bool
     {
-        return $this->_throwableHandler != NULL && is_callable($this->_throwableHandler);
+        return is_callable($this->_throwableHandler);
     }
 
     /**
