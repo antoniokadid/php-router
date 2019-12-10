@@ -3,12 +3,12 @@
 namespace AntonioKadid\Routing;
 
 /**
- * Class HttpMethods
+ * Class HttpMethod
  *
  * @package AntonioKadid\Routing
  * @url https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
  */
-abstract class HttpMethods
+abstract class HttpMethod
 {
     /**
      * The GET method requests a representation of the specified resource. Requests using GET should only retrieve data.

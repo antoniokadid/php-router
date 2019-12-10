@@ -42,7 +42,7 @@ final class Router
      */
     public static function get(string $route): Route
     {
-        return self::register(HttpMethods::GET, $route);
+        return self::register(HttpMethod::GET, $route);
     }
 
     /**
@@ -52,7 +52,7 @@ final class Router
      */
     public static function post(string $route): Route
     {
-        return self::register(HttpMethods::POST, $route);
+        return self::register(HttpMethod::POST, $route);
     }
 
     /**
@@ -62,7 +62,7 @@ final class Router
      */
     public static function put(string $route): Route
     {
-        return self::register(HttpMethods::PUT, $route);
+        return self::register(HttpMethod::PUT, $route);
     }
 
     /**
@@ -72,7 +72,7 @@ final class Router
      */
     public static function patch(string $route): Route
     {
-        return self::register(HttpMethods::PATCH, $route);
+        return self::register(HttpMethod::PATCH, $route);
     }
 
     /**
@@ -82,7 +82,7 @@ final class Router
      */
     public static function delete(string $route): Route
     {
-        return self::register(HttpMethods::DELETE, $route);
+        return self::register(HttpMethod::DELETE, $route);
     }
 
     /**
