@@ -186,6 +186,14 @@ class Route
     /**
      * @return bool
      */
+    public function hasThrowableHandler(): bool
+    {
+        return $this->_throwableHandler != NULL && is_callable($this->_throwableHandler);
+    }
+
+    /**
+     * @return bool
+     */
     private function checkConditions(): bool
     {
         if (!is_array($this->_conditions) || count($this->_urlQueryParams) === 0)

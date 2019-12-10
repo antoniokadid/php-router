@@ -14,6 +14,9 @@ class Router
     /** @var Route */
     private static $_activatedRoute = NULL;
 
+    /** @var callable|NULL */
+    private static $_globalThrowableHandler = NULL;
+
     /**
      * Router constructor.
      */
@@ -28,7 +31,7 @@ class Router
      */
     public static function get(string $route): Route
     {
-        return self::register('GET', $route);
+        return self::register(HttpMethods::GET, $route);
     }
 
     /**
@@ -38,7 +41,7 @@ class Router
      */
     public static function post(string $route): Route
     {
-        return self::register('POST', $route);
+        return self::register(HttpMethods::POST, $route);
     }
 
     /**
@@ -48,7 +51,7 @@ class Router
      */
     public static function put(string $route): Route
     {
-        return self::register('PUT', $route);
+        return self::register(HttpMethods::PUT, $route);
     }
 
     /**
@@ -58,7 +61,7 @@ class Router
      */
     public static function patch(string $route): Route
     {
-        return self::register('PATCH', $route);
+        return self::register(HttpMethods::PATCH, $route);
     }
 
     /**
@@ -68,41 +71,40 @@ class Router
      */
     public static function delete(string $route): Route
     {
-        return self::register('DELETE', $route);
-    }
-
-    /**
-     * @param string $route
-     *
-     * @return Route
-     */
-    public static function options(string $route): Route
-    {
-        return self::register('OPTIONS', $route);
+        return self::register(HttpMethods::DELETE, $route);
     }
 
     /**
      * @param string $method
-     * @param string ...$routes
+     * @param mixed  ...$routes
      *
      * @return Route
      */
-    public static function register(string $method, string ...$routes): Route
+    public static function register(string $method, ...$routes): Route
     {
         if (self::$_activatedRoute != NULL || strcasecmp($_SERVER['REQUEST_METHOD'], $method) !== 0)
             return new Route();
 
         foreach ($routes as $route) {
-            $pattern = Router::routeToRegExPattern($route);
-            if (@preg_match($pattern, $_SERVER['REQUEST_URI'], $urlParameters) === 1) {
-                parse_str($_SERVER['QUERY_STRING'], $queryParameters);
-                self::$_activatedRoute = new Route($urlParameters + $queryParameters);
+            $pattern = Router::routeToRegExPattern(strval($route));
+            if (@preg_match($pattern, $_SERVER['REQUEST_URI'], $urlParameters) !== 1)
+                continue;
 
-                return self::$_activatedRoute;
-            }
+            parse_str($_SERVER['QUERY_STRING'], $queryParameters);
+            self::$_activatedRoute = new Route($urlParameters + $queryParameters);
+
+            return self::$_activatedRoute;
         }
 
         return new Route();
+    }
+
+    /**
+     * @param callable $callable
+     */
+    public static function catch(callable $callable): void
+    {
+        self::$_globalThrowableHandler = $callable;
     }
 
     /**
@@ -112,10 +114,20 @@ class Router
      */
     public static function execute()
     {
-        if (self::$_activatedRoute != NULL)
+        if (self::$_activatedRoute == NULL)
+            return NULL;
+
+        if (self::$_activatedRoute->hasThrowableHandler())
             return self::$_activatedRoute->execute();
 
-        return NULL;
+        try {
+            return self::$_activatedRoute->execute();
+        } catch (Throwable $throwable) {
+            if (self::$_globalThrowableHandler != NULL && is_callable(self::$_globalThrowableHandler))
+                return call_user_func(self::$_globalThrowableHandler, $throwable);
+
+            throw $throwable;
+        }
     }
 
     /**
@@ -128,13 +140,13 @@ class Router
     private static function routeToRegExPattern(string $route): string
     {
         $pattern = preg_replace_callback_array([
-            '/\\{(\\w+)\\}/i' => function($match) {
+            '/\\{(\\w+)\\}/i' => function ($match) {
                 return sprintf('(?<%s>(?:[^/\\?]+))', $match[1]);
             },
-            '/\\*\\*/' => function($match) {
+            '/\\*\\*/' => function ($match) {
                 return '(?:[^\\?]+)';
             },
-            '/\\*/' => function($match) {
+            '/\\*/' => function ($match) {
                 return '(?:[^/\\?]+)';
             }
         ], $route);
