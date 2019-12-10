@@ -9,19 +9,30 @@ use Throwable;
  *
  * @package AntonioKadid\Routing
  */
-class Router
+final class Router
 {
+    private static $_routerInstance = NULL;
     /** @var Route */
     private static $_activatedRoute = NULL;
-
     /** @var callable|NULL */
-    private static $_globalThrowableHandler = NULL;
+    private $_globalThrowableHandler = NULL;
 
     /**
      * Router constructor.
      */
     private function __construct()
     {
+    }
+
+    /**
+     * @return Router
+     */
+    public static function init(): Router
+    {
+        if (self::$_routerInstance == NULL)
+            self::$_routerInstance = new Router();
+
+        return self::$_routerInstance;
     }
 
     /**
@@ -100,37 +111,6 @@ class Router
     }
 
     /**
-     * @param callable $callable
-     */
-    public static function catch(callable $callable): void
-    {
-        self::$_globalThrowableHandler = $callable;
-    }
-
-    /**
-     * @return mixed|null
-     *
-     * @throws Throwable
-     */
-    public static function execute()
-    {
-        if (self::$_activatedRoute == NULL)
-            return NULL;
-
-        if (self::$_activatedRoute->hasThrowableHandler())
-            return self::$_activatedRoute->execute();
-
-        try {
-            return self::$_activatedRoute->execute();
-        } catch (Throwable $throwable) {
-            if (self::$_globalThrowableHandler != NULL && is_callable(self::$_globalThrowableHandler))
-                return call_user_func(self::$_globalThrowableHandler, $throwable);
-
-            throw $throwable;
-        }
-    }
-
-    /**
      * Converts a route into regex pattern.
      *
      * @param string $route
@@ -155,5 +135,40 @@ class Router
             $pattern = "/{$pattern}";
 
         return sprintf('`^%s(?:\\?.*$|$)`i', $pattern);
+    }
+
+    /**
+     * @param callable $callable
+     *
+     * @return Router
+     */
+    public function catch(callable $callable): Router
+    {
+        $this->_globalThrowableHandler = $callable;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed|null
+     *
+     * @throws Throwable
+     */
+    public function execute()
+    {
+        if (self::$_activatedRoute == NULL)
+            return NULL;
+
+        if (self::$_activatedRoute->hasThrowableHandler())
+            return self::$_activatedRoute->execute();
+
+        try {
+            return self::$_activatedRoute->execute();
+        } catch (Throwable $throwable) {
+            if (is_callable($this->_globalThrowableHandler))
+                return call_user_func($this->_globalThrowableHandler, $throwable);
+
+            throw $throwable;
+        }
     }
 }
