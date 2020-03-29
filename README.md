@@ -1,11 +1,13 @@
-# php-router
-A PHP WYSIWYG library to enable mapping of URLs that do not exist.
+# WAPPKit Core - HTTP
+A PHP library to receive and respond to HTTP requests.
 
-*Project under development and may be heavily change. Use at your own risk.*
+Part of Web Application Kit (WAPPKit) Core which powers WAPPKit, a privately owned CMS.
+
+*Project under development and may be subject to a lot of changes. Use at your own risk.*
 
 ## Installation
 
-composer require antoniokadid/php-router
+composer require antoniokadid/wappkit-core-http
 
 ## Requirements
 
@@ -36,7 +38,7 @@ RewriteRule ^(.*)$ index.php [QSA,L,END]
 ## Examples
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 /** 
  * Will match any of the following (3 parts separated by 2 slashes)
@@ -67,7 +69,7 @@ Router::execute();
 GET request *en/hello/test*
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 Router::get('{language}/{controller}/{action}')
     ->then(function ($language, $controller, $action) {
@@ -91,7 +93,7 @@ GET request *en/hello/test* with callback parameters in different order with URL
 Router automatically matches the names of the parameters to the url keywords.
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 Router::get('{language}/{controller}/{action}')
     ->then(function ($action, $controller, $language) {
@@ -113,7 +115,7 @@ Router::execute();
 The above example using a class instead of callback.
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 class HelloController
 {
@@ -141,7 +143,7 @@ Router::execute();
 Similar to the above example invoke injection handler for language.
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 class Language
 {
@@ -184,7 +186,7 @@ Router::execute();
 Conditional route execution.
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 // This route will be executed if language has value 'en' or 'el' and if controller has value 'hello'.
 Router::get('{language}/{controller}/{action}')
@@ -215,7 +217,7 @@ echo $returnedRouteValue;
 Exception handling.
 
 ```php
-use AntonioKadid\Routing\Router;
+use AntonioKadid\WAPPKitCore\HTTP\Routing\Router;
 
 // This route will be executed if language has value 'en' or 'el' and if controller has value 'hello'.
 Router::get('{language}/{controller}/{action}')
@@ -245,4 +247,4 @@ echo $returnedRouteValue;
 ```
 ## LICENSE
 
-php-router is released under MIT license.
+MIT license.

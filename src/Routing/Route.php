@@ -1,6 +1,6 @@
 <?php
 
-namespace AntonioKadid\Routing;
+namespace AntonioKadid\WAPPKitCore\HTTP\Routing;
 
 use Closure;
 use InvalidArgumentException;
@@ -12,7 +12,7 @@ use Throwable;
 /**
  * Class Route
  *
- * @package AntonioKadid\Routing
+ * @package AntonioKadid\WAPPKitCore\HTTP\Routing
  */
 class Route
 {

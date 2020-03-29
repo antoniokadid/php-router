@@ -1,13 +1,14 @@
 <?php
 
-namespace AntonioKadid\Routing;
+namespace AntonioKadid\WAPPKitCore\HTTP\Routing;
 
+use AntonioKadid\WAPPKitCore\HTTP\Method;
 use Throwable;
 
 /**
  * Class Router
  *
- * @package AntonioKadid\Routing
+ * @package AntonioKadid\WAPPKitCore\HTTP\Routing
  */
 final class Router
 {
@@ -42,7 +43,7 @@ final class Router
      */
     public static function get(string $route): Route
     {
-        return self::register(HttpMethod::GET, $route);
+        return self::register(Method::GET, $route);
     }
 
     /**
@@ -52,7 +53,7 @@ final class Router
      */
     public static function post(string $route): Route
     {
-        return self::register(HttpMethod::POST, $route);
+        return self::register(Method::POST, $route);
     }
 
     /**
@@ -62,7 +63,7 @@ final class Router
      */
     public static function put(string $route): Route
     {
-        return self::register(HttpMethod::PUT, $route);
+        return self::register(Method::PUT, $route);
     }
 
     /**
@@ -72,7 +73,7 @@ final class Router
      */
     public static function patch(string $route): Route
     {
-        return self::register(HttpMethod::PATCH, $route);
+        return self::register(Method::PATCH, $route);
     }
 
     /**
@@ -82,7 +83,7 @@ final class Router
      */
     public static function delete(string $route): Route
     {
-        return self::register(HttpMethod::DELETE, $route);
+        return self::register(Method::DELETE, $route);
     }
 
     /**

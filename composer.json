@@ -1,6 +1,6 @@
 {
     "name": "antoniokadid/php-router",
-    "description": "A PHP WYSIWYG library to enable mapping of URLs that do not exist.",
+    "description": "A PHP library to receive and respond to HTTP requests.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -12,11 +12,25 @@
         }
     ],
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "antoniokadid/wappkit-core-text": ">=2.0",
+        "antoniokadid/wappkit-core-collections": ">=2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     },
     "autoload": {
         "psr-4": {
-            "AntonioKadid\\Routing\\": "src/"
+            "AntonioKadid\\WAPPKitCore\\HTTP\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AntonioKadid\\WAPPKitCore\\HTTP\\": "src/",
+            "AntonioKadid\\WAPPKitCore\\Tests\\HTTP\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit --testdox tests"
     }
 }
