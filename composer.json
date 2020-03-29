@@ -1,5 +1,5 @@
 {
-    "name": "antoniokadid/php-router",
+    "name": "antoniokadid/wappkit-core-http",
     "description": "A PHP library to receive and respond to HTTP requests.",
     "type": "library",
     "license": "MIT",
