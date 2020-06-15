@@ -6,9 +6,10 @@ namespace AntonioKadid\WAPPKitCore\HTTP;
  * Class Method
  *
  * @package AntonioKadid\WAPPKitCore\HTTP
+ *
  * @url https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
  */
-abstract class Method
+class Method
 {
     /**
      * The GET method requests a representation of the specified resource. Requests using GET should only retrieve data.

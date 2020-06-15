@@ -7,7 +7,7 @@ namespace AntonioKadid\WAPPKitCore\HTTP;
  *
  * @package AntonioKadid\WAPPKitCore\HTTP
  */
-abstract class Status
+class Status
 {
     /** The request has succeeded. */
     const OK = 200;
