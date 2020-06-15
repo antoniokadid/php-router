@@ -20,10 +20,8 @@ class FileDownloadResponse extends Response
 
     public function output(): void
     {
-        if (!headers_sent()) {
-            header_remove('Content-Type');
-            header('Content-Type: application/json');
-        }
+        if (!headers_sent())
+            header_remove();
 
         if (ob_get_length() !== FALSE)
             ob_clean();
