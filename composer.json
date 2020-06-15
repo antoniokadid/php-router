@@ -13,6 +13,7 @@
     ],
     "require": {
         "php": ">=7.1",
+        "ext-curl": "*",
         "antoniokadid/wappkit-core-text": ">=2.0",
         "antoniokadid/wappkit-core-collections": ">=2.0"
     },
