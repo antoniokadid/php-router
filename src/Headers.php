@@ -52,4 +52,18 @@ class Headers extends Map
 
         return $result;
     }
+
+    /**
+     * @return bool
+     */
+    public function outputHeaders(): bool
+    {
+        if (headers_sent())
+            return FALSE;
+
+        foreach ($this->source as $key => $value)
+            header(sprintf('%s: %s', $key, $value));
+
+        return TRUE;
+    }
 }
