@@ -14,8 +14,8 @@
     "require": {
         "php": ">=7.1",
         "ext-curl": "*",
-        "antoniokadid/wappkit-core-text": "dev-master",
-        "antoniokadid/wappkit-core-collections": "dev-master"
+        "antoniokadid/wappkit-core-text": "dev-master@dev",
+        "antoniokadid/wappkit-core-collections": "dev-master@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^9"
