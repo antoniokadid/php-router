@@ -2,7 +2,7 @@
 
 namespace AntonioKadid\WAPPKitCore\HTTP\Response;
 
-use AntonioKadid\WAPPKitCore\Http\Status;
+use AntonioKadid\WAPPKitCore\HTTP\Status;
 
 /**
  * Class Response
